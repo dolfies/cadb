@@ -4,21 +4,24 @@
 
 #First run
 if [ -f "/usr/share/cadb/prefs/firstrun/false" ]; then
-    exit
+    true
 else
     #Make application directories
-    mkdir /usr/bin/cadb >/dev/null 2>&1
+    sudo mkdir /usr/share/cadb >/dev/null 2>&1
     if [ $? -gt 0 ]; then
-	    echo "Please use sudo for the first run"
-	    exit
+	 echo "Please run as root for the first run."
+	 exit
     fi
-    mkdir /usr/bin/cadb/prefs
+    sudo mkdir /usr/share/cadb/prefs >/dev/null 2>&1
 
     #Create ~/APKs folder
     echo "First run, creating APK folder. Put future APKs in this folder (~/APKs)"
-    mkdir ~/APKs
-    mkdir /usr/share/cadb/prefs/firstrun
-    touch /usr/share/cadb/prefs/firstrun/false >/dev/null 2>&1
+    sudo mkdir ~/APKs >/dev/null 2>&1
+    sudo mkdir /usr/share/cadb/prefs/firstrun >/dev/null 2>&1
+    sudo touch /usr/share/cadb/prefs/firstrun/false >/dev/null 2>&1
+    echo "Initial config done"
+    echo "Exiting..."
+    exit
 fi
 
 #Check command executed
@@ -69,55 +72,71 @@ if [[ $1 = "status" ]]; then
 fi
 
 if [[ $1 = "setpref-firstrun" ]]; then
+    if [ "$EUID" -ne 0 ]
+	then echo "Please run as root to change preferences."
+  	exit
+    fi
+
     if [[ $2 = "false" ]]; then
-	mkdir /usr/bin/cadb/prefs/firstrun >/dev/null 2>&1
-	touch /usr/bin/cadb/prefs/firstrun/false >/dev/null 2>&1
+	sudo rm -rf /usr/share/cadb/prefs/firstrun/true >/dev/null 2>&1
+	sudo touch /usr/share/cadb/prefs/firstrun/false >/dev/null 2>&1
 	exit
     fi
     if [[ $2 = "true" ]]; then
-	mkdir /usr/bin/cadb/prefs/firstrun >/dev/null 2>&1
-	touch /usr/bin/cadb/prefs/firstrun/true >/dev/null 2>&1
+	sudo rm -rf /usr/share/cadb/prefs/fistrun/false >/dev/null 2>&1
+	sudo touch /usr/share/cadb/prefs/firstrun/true >/dev/null 2>&1
 	exit
     fi
     if [ -z "$2" ]; then
 	echo "Syntax:"
-	echo "setpref-prefname true/false"
+	echo "sudo setpref-prefname true/false"
 	exit
     fi
+echo "Syntax:"
+echo "sudo setpref-prefname true/false"
 fi
 
 if [[ $1 = "-?" ]]; then
-    echo "CADB utility v1.1"
+    echo "CADB utility v1.2"
     echo "Author: u/dolfies_person"
     echo "This utility only works if you have enabled ADB Debugging in Settings"
     printf "\n"
+    echo "Usage: cadb command"
+    echo "       cadb command {options}"
+    printf "\n"
     echo "Commands:"
     echo "connect - Connects to the ARC+ container."
-    echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Chromebook Downloads folder, if Linux has access."
+    echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Downloads folder, if it's shared."
     echo "shell   - Starts an adb shell on the ARC++ container."
     echo "status  - Shows if you're connected to the ARC++ shell via adb."
     exit
 fi
 
 if [[ $1 = "--help" ]]; then
-    echo "CADB utility v1.1"
+    echo "CADB utility v1.2"
     echo "Author: u/dolfies_person"
     echo "This utility only works if you have enabled ADB Debugging in Settings"
     printf "\n"
+    echo "Usage: cadb command"
+    echo "       cadb command {options}"
+    printf "\n"
     echo "Commands:"
     echo "connect - Connects to the ARC+ container."
-    echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Chromebook Downloads folder, if Linux has access."
+    echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Downloads folder, if it's shared."
     echo "shell   - Starts an adb shell on the ARC++ container."
     echo "status  - Shows if you're connected to the ARC++ shell via adb."
     exit
 fi
 
-    echo "CADB utility v1.1"
+    echo "CADB utility v1.2"
     echo "Author: u/dolfies_person"
     echo "This utility only works if you have enabled ADB Debugging in Settings"
     printf "\n"
+    echo "Usage: cadb command"
+    echo "       cadb command {options}"
+    printf "\n"
     echo "Commands:"
-    echo "connect - Connects to the ARC++ container."
-    echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Chromebook Downloads folder, if Linux has access."
-    echo "shell   - Starts an adb shell on the ARC+ container."
-    echo "status  - Shows if you're connected to the ARC++ container via adb."
+    echo "connect - Connects to the ARC+ container."
+    echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Downloads folder, if it's shared."
+    echo "shell   - Starts an adb shell on the ARC++ container."
+    echo "status  - Shows if you're connected to the ARC++ shell via adb."
