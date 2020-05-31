@@ -1,0 +1,123 @@
+#!/bin/bash
+
+#CADB utility, a set of commands to make Chrome OS adb commands easier.
+
+#First run
+if [ -f "/usr/share/cadb/prefs/firstrun/false" ]; then
+    exit
+else
+    #Make application directories
+    mkdir /usr/bin/cadb >/dev/null 2>&1
+    if [ $? -gt 0 ]; then
+	    echo "Please use sudo for the first run"
+	    exit
+    fi
+    mkdir /usr/bin/cadb/prefs
+
+    #Create ~/APKs folder
+    echo "First run, creating APK folder. Put future APKs in this folder (~/APKs)"
+    mkdir ~/APKs
+    mkdir /usr/share/cadb/prefs/firstrun
+    touch /usr/share/cadb/prefs/firstrun/false >/dev/null 2>&1
+fi
+
+#Check command executed
+if [[ $1 = "shell" ]]; then
+    adb devices >/dev/null 2>&1
+    adb -s emulator-5554 shell
+    if [ $? -gt 0 ]; then
+	echo "Connection failed"
+	exit
+    fi
+    exit
+fi
+
+if [[ $1 = "connect" ]]; then
+    adb connect 101.115.92.2:5555 >/dev/null 2>&1
+    if [ $? -gt 0 ]; then
+	echo "Connection failed"
+	exit
+    fi
+    echo "Connection successful"
+    exit
+fi
+
+if [[ $1 = "install" ]]; then
+    #Note: install first looks for apks in the current directory, then ~/APKs/, 
+    #then the downloads folder if it has access
+    if [ -z "$2" ]; then
+	echo "No .apk file specified"
+	exit
+    fi
+    adb -s emulator-5554 install $2 >/dev/null 2>&1 || adb -s emulator-5554 install ~/APKs/$2 >/dev/null 2>&1 || adb -s emulator-5554 install /mnt/chromeos/MyFiles/Downloads/$2 >/dev/null 2>&1
+    if [ $? -gt 0 ]; then
+	echo "Install failed"
+	exit
+    fi
+    echo "Installed"
+    exit
+fi
+
+if [[ $1 = "status" ]]; then
+    adb devices | grep emulator-5554
+    if [ $? -gt 0 ]; then
+	echo "ARC++ Disconnected"
+	exit
+    fi
+    echo "ARC++ Connected"
+    exit
+fi
+
+if [[ $1 = "setpref-firstrun" ]]; then
+    if [[ $2 = "false" ]]; then
+	mkdir /usr/bin/cadb/prefs/firstrun >/dev/null 2>&1
+	touch /usr/bin/cadb/prefs/firstrun/false >/dev/null 2>&1
+	exit
+    fi
+    if [[ $2 = "true" ]]; then
+	mkdir /usr/bin/cadb/prefs/firstrun >/dev/null 2>&1
+	touch /usr/bin/cadb/prefs/firstrun/true >/dev/null 2>&1
+	exit
+    fi
+    if [ -z "$2" ]; then
+	echo "Syntax:"
+	echo "setpref-prefname true/false"
+	exit
+    fi
+fi
+
+if [[ $1 = "-?" ]]; then
+    echo "CADB utility v1.1"
+    echo "Author: u/dolfies_person"
+    echo "This utility only works if you have enabled ADB Debugging in Settings"
+    printf "\n"
+    echo "Commands:"
+    echo "connect - Connects to the ARC+ container."
+    echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Chromebook Downloads folder, if Linux has access."
+    echo "shell   - Starts an adb shell on the ARC++ container."
+    echo "status  - Shows if you're connected to the ARC++ shell via adb."
+    exit
+fi
+
+if [[ $1 = "--help" ]]; then
+    echo "CADB utility v1.1"
+    echo "Author: u/dolfies_person"
+    echo "This utility only works if you have enabled ADB Debugging in Settings"
+    printf "\n"
+    echo "Commands:"
+    echo "connect - Connects to the ARC+ container."
+    echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Chromebook Downloads folder, if Linux has access."
+    echo "shell   - Starts an adb shell on the ARC++ container."
+    echo "status  - Shows if you're connected to the ARC++ shell via adb."
+    exit
+fi
+
+    echo "CADB utility v1.1"
+    echo "Author: u/dolfies_person"
+    echo "This utility only works if you have enabled ADB Debugging in Settings"
+    printf "\n"
+    echo "Commands:"
+    echo "connect - Connects to the ARC++ container."
+    echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Chromebook Downloads folder, if Linux has access."
+    echo "shell   - Starts an adb shell on the ARC+ container."
+    echo "status  - Shows if you're connected to the ARC++ container via adb."
