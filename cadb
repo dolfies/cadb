@@ -3,22 +3,23 @@
 #CADB utility, a set of commands to make Chrome OS adb commands easier.
 
 #First run
-if [ -f "/usr/share/cadb/prefs/firstrun/false" ]; then
+if [ -f "~/.config/cadb/prefs/firstrun/false" ]; then
     true
 else
     #Make application directories
-    sudo mkdir /usr/share/cadb >/dev/null 2>&1
-    if [ $? -gt 0 ]; then
-	 echo "Please run as root for the first run."
-	 exit
-    fi
-    sudo mkdir /usr/share/cadb/prefs >/dev/null 2>&1
+    mkdir ~/.config/cadb >/dev/null 2>&1
+    #Deprecated sudo
+    #if [ $? -gt 0 ]; then
+	 #echo "Please run as root for the first run."
+	 #exit
+    #fi
+    mkdir ~/.config/cadb/prefs >/dev/null 2>&1
 
     #Create ~/APKs folder
     echo "First run, creating APK folder. Put future APKs in this folder (~/APKs)"
-    sudo mkdir ~/APKs >/dev/null 2>&1
-    sudo mkdir /usr/share/cadb/prefs/firstrun >/dev/null 2>&1
-    sudo touch /usr/share/cadb/prefs/firstrun/false >/dev/null 2>&1
+    mkdir ~/APKs >/dev/null 2>&1
+    mkdir ~/.config/cadb/prefs/firstrun >/dev/null 2>&1
+    touch ~/.config/cadb/prefs/firstrun/false >/dev/null 2>&1
     echo "Initial config done"
     echo "Exiting..."
     exit
@@ -52,7 +53,7 @@ if [[ $1 = "install" ]]; then
 	echo "No .apk file specified"
 	exit
     fi
-    adb -s emulator-5554 install $2 >/dev/null 2>&1 || adb -s emulator-5554 install ~/APKs/$2 >/dev/null 2>&1 || adb -s emulator-5554 install /mnt/chromeos/MyFiles/Downloads/$2 >/dev/null 2>&1
+    adb -s emulator-5554 install "$2" >/dev/null 2>&1 || adb -s emulator-5554 install ~/APKs/$2 >/dev/null 2>&1 || adb -s emulator-5554 install /mnt/chromeos/MyFiles/Downloads/$2 >/dev/null 2>&1
     if [ $? -gt 0 ]; then
 	echo "Install failed"
 	exit
@@ -98,7 +99,8 @@ fi
 
 if [[ $1 = "-?" ]]; then
     echo "CADB utility v1.2"
-    echo "Author: u/dolfies_person"
+    echo "Author: Dolfies"
+    echo "Support: github.com/dolfies/cadb"
     echo "This utility only works if you have enabled ADB Debugging in Settings"
     printf "\n"
     echo "Usage: cadb command"
@@ -109,12 +111,14 @@ if [[ $1 = "-?" ]]; then
     echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Downloads folder, if it's shared."
     echo "shell   - Starts an adb shell on the ARC++ container."
     echo "status  - Shows if you're connected to the ARC++ shell via adb."
+    echo "setpref - Changes a preference."
     exit
 fi
 
 if [[ $1 = "--help" ]]; then
-    echo "CADB utility v1.2"
-    echo "Author: u/dolfies_person"
+    echo "CADB utility v1.3"
+    echo "Author: Dolfies"
+    echo "Support: github.com/dolfies/cadb"
     echo "This utility only works if you have enabled ADB Debugging in Settings"
     printf "\n"
     echo "Usage: cadb command"
@@ -125,10 +129,11 @@ if [[ $1 = "--help" ]]; then
     echo "install - Installs specified .apk file. Checks in current dir, in ~/APKs, and in the Downloads folder, if it's shared."
     echo "shell   - Starts an adb shell on the ARC++ container."
     echo "status  - Shows if you're connected to the ARC++ shell via adb."
+    echo "setpref - Changes a preference."
     exit
 fi
 
-    echo "CADB utility v1.2"
+    echo "CADB utility v1.3"
     echo "Author: u/dolfies_person"
     echo "This utility only works if you have enabled ADB Debugging in Settings"
     printf "\n"
