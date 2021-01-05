@@ -3,15 +3,13 @@
 #CADB utility, a set of commands to make Chrome OS adb commands easier.
 
 #First run
-if [ -f "~/.config/cadb/prefs/firstrun/false" ]; then
-    true
-else
+if [ ! -f ~/.config/cadb/prefs/firstrun/false ]; then
     #Make application directories
     mkdir ~/.config/cadb >/dev/null 2>&1
     #Deprecated sudo
     #if [ $? -gt 0 ]; then
-	 #echo "Please run as root for the first run."
-	 #exit
+         #echo "Please run as root for the first run."
+         #exit
     #fi
     mkdir ~/.config/cadb/prefs >/dev/null 2>&1
 
@@ -24,7 +22,6 @@ else
     echo "Exiting..."
     exit
 fi
-
 #Check command executed
 if [[ $1 = "shell" ]]; then
     adb devices >/dev/null 2>&1
