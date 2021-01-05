@@ -53,7 +53,7 @@ fi
     
 if [[ $@ = "system" ]]; then
     echo "Installing in system mode..."
-    if [ `whoami` = 'root' ]; then
+    if [ `whoami` != 'root' ]; then
       echo "ERROR 2: System mode needs root."
       exit
     fi
