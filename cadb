@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #CADB utility, a set of commands to make Chrome OS adb commands easier.
 
 #First run
